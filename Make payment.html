@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Payment - Loan Liquidation</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --surface-card: #ffffff;
+            --brand-primary: #0284c7;
+            --brand-accent: #ef4444;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --text-dark: #0f172a;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .portal-container {
+            width: 100%;
+            max-width: 1040px;
+        }
+
+        .portal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 24px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: conic-gradient(var(--brand-primary) 0deg 180deg, var(--brand-accent) 180deg 360deg);
+            position: relative;
+        }
+
+        .logo-mark::after {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            background: var(--bg-main);
+            border-radius: 50%;
+        }
+
+        .logo-typography {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-dark);
+        }
+
+        .logo-typography span {
+            color: var(--brand-accent);
+            font-weight: 800;
+        }
+
+        .workspace-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 840px) {
+            .workspace-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-payment-method {
+            background-color: var(--surface-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 35px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .payment-tabs {
+            display: flex;
+            background-color: #f1f5f9;
+            padding: 4px;
+            border-radius: var(--radius-md);
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tab-btn.is-active {
+            background-color: #ffffff;
+            color: var(--text-dark);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .input-field {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-weight: 500;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-md);
+            color: var(--text-dark);
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
+
+        .auth-checkbox-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 18px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            background-color: #f8fafc;
+            margin-top: 10px;
+        }
+
+        .auth-checkbox-card input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--brand-primary);
+            cursor: pointer;
+        }
+
+        .auth-checkbox-card label {
+            font-size: 13px;
+            color: var(--text-main);
+            line-height: 1.5;
+            cursor: pointer;
+        }
+
+        .payment-form-view {
+            display: none;
+        }
+
+        .payment-form-view.is-visible {
+            display: block;
+        }
+
+        .panel-order-review {
+            background-color: #0f172a;
+            color: #ffffff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 35px 30px;
+        }
+
+        .badge-review {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #38bdf8;
+            margin-bottom: 25px;
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 6px 14px;
+            border-radius: 6px;
+        }
+
+        .amount-debit-block {
+            background-color: #1e293b;
+            margin: 20px -30px 30px -30px;
+            padding: 24px 30px;
+        }
+
+        .debit-lbl {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .debit-val {
+            font-size: 36px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .meta-data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid #1e293b;
+            font-size: 14px;
+        }
+
+        .meta-data-row:last-of-type {
+            border-bottom: none;
+            margin-bottom: 24px;
+        }
+
+        .meta-lbl {
+            color: #94a3b8;
+        }
+
+        .meta-val {
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .action-submit-btn {
+            width: 100%;
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-submit-btn:hover {
+            background-color: #0369a1;
+        }
+
+        .action-submit-btn:disabled {
+            background-color: #64748b;
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* --- DYNAMIC PRODUCTION POPUP DIALOG --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .retention-card {
+            background-color: #ffffff;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 480px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.is-open .retention-card {
+            transform: scale(1);
+        }
+
+        .offer-pill {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 14px;
+        }
+
+        .offer-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0 0 4px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .offer-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+            line-height: 1.4;
+        }
+
+        .offer-desc {
+            font-size: 14px;
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0 0 30px 0;
+        }
+
+        .offer-btn-accept {
+            width: 100%;
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background-color 0.15s;
+            margin-bottom: 16px;
+        }
+
+        .offer-btn-decline {
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .offer-btn-decline:hover {
+            color: var(--brand-accent);
+        }
+    </style>
+</head>
+<body>
+
+<div class="portal-container">
+    <header class="portal-header">
+        <div class="logo-container">
+            <div class="logo-mark"></div>
+            <div class="logo-typography">First Help<span>Financial</span></div>
+        </div>
+    </header>
+
+    <div class="workspace-layout">
+        <main class="panel-payment-method">
+            <div class="section-title">Select Payment Method</div>
+            
+            <div class="payment-tabs">
+                <button class="tab-btn is-active" data-target="ach-form" type="button">Bank (ACH)</button>
+                <button class="tab-btn" data-target="card-form" type="button">Debit Card</button>
+                <button class="tab-btn" data-target="dealership-form" type="button">Dealership/Refi</button>
+            </div>
+
+            <div class="payment-form-view is-visible" id="ach-form">
+                <div class="form-group">
+                    <div class="section-title">Bank Routing Number</div>
+                    <input type="text" class="input-field validate-input" placeholder="9-digit transit routing number">
+                </div>
+                <div class="form-group">
+                    <div class="section-title">Checking Account Number</div>
+                    <input type="text" class="input-field validate-input" placeholder="Your checking account number">
+                </div>
+                <div class="auth-checkbox-card">
+                    <input type="checkbox" id="ach-auth-check">
+                    <label for="ach-auth-check">
+                        I authorize First Help Financial to initiate an electronic transaction using the credentials specified above.
+                    </label>
+                </div>
+            </div>
+
+            <div class="payment-form-view" id="card-form">
+                <div class="form-group">
+                    <div class="section-title">Cardholder Name</div>
+                    <input type="text" class="input-field validate-input" placeholder="Name as it appears on card">
+                </div>
+                <div class="form-group">
+                    <div class="section-title">Card Number</div>
+                    <input type="text" class="input-field validate-input" placeholder="0000 0000 0000 0000">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <div class="section-title">Expiration Date</div>
+                        <input type="text" class="input-field" placeholder="MM/YY">
+                    </div>
+                    <div class="form-group">
+                        <div class="section-title">Security Code</div>
+                        <input type="text" class="input-field" placeholder="CVV">
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-form-view" id="dealership-form">
+                <div class="form-group">
+                    <div class="section-title">Institution / Dealer Name</div>
+                    <input type="text" class="input-field validate-input" placeholder="Enter dealer or refinancing company name">
+                </div>
+                <div class="form-group">
+                    <div class="section-title">Reference / Check Reference Number</div>
+                    <input type="text" class="input-field validate-input" placeholder="Enter tracking or check number reference">
+                </div>
+            </div>
+        </main>
+
+        <aside class="panel-order-review">
+            <div class="badge-review">Review Payoff Order</div>
+            
+            <div class="amount-debit-block">
+                <span class="debit-lbl">Amount to Debit</span>
+                <span class="debit-val">$10,708.27</span>
+            </div>
+
+            <div class="meta-data-row">
+                <span class="meta-lbl">Account Lookup</span>
+                <span class="meta-val">LN-83921-FULL</span>
+            </div>
+            <div class="meta-data-row">
+                <span class="meta-lbl">Customer Name</span>
+                <span class="meta-val">John Doe</span>
+            </div>
+            <div class="meta-data-row">
+                <span class="meta-lbl">Transaction Type</span>
+                <span class="meta-val">Early Loan Payoff</span>
+            </div>
+
+            <button class="action-submit-btn" id="submit-payment-btn" type="button" disabled>
+                Make Payment
+            </button>
+        </aside>
+    </div>
+</div>
+
+<div class="modal-overlay" id="retention-modal">
+    <div class="retention-card">
+        <span class="offer-pill" id="experiment-pill">Special Account Offer</span>
+        <h2 class="offer-title" id="experiment-title">Special Offer</h2>
+        <div class="offer-subtitle" id="experiment-subtitle">Get a reduction on your monthly installments now.</div>
+        <p class="offer-desc" id="experiment-desc">Loading exclusive offer terms...</p>
+        
+        <button class="offer-btn-accept" id="btn-accept-offer" type="button">Accept Special Offer</button>
+        <div>
+            <button class="offer-btn-decline" id="btn-decline-offer" type="button">No thanks, proceed with full payoff</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const formViews = document.querySelectorAll('.payment-form-view');
+    const submitPaymentBtn = document.getElementById('submit-payment-btn');
+    const inputFields = document.querySelectorAll('.validate-input');
+    const achCheckbox = document.getElementById('ach-auth-check');
+
+    const retentionModal = document.getElementById('retention-modal');
+    const experimentPill = document.getElementById('experiment-pill');
+    const experimentTitle = document.getElementById('experiment-title');
+    const experimentSubtitle = document.getElementById('experiment-subtitle');
+    const experimentDesc = document.getElementById('experiment-desc');
+    const btnAcceptOffer = document.getElementById('btn-accept-offer');
+    const btnDeclineOffer = document.getElementById('btn-decline-offer');
+
+    let currentShownVariant = 'A';
+
+    // Field Form Validation Logic
+    function validateCurrentTab() {
+        const activeTab = document.querySelector('.payment-form-view.is-visible');
+        const activeInputs = activeTab.querySelectorAll('.validate-input');
+        
+        let allFilled = true;
+        activeInputs.forEach(input => {
+            if (input.value.trim() === '') allFilled = false;
+        });
+
+        if (activeTab.id === 'ach-form' && !achCheckbox.checked) {
+            allFilled = false;
+        }
+
+        submitPaymentBtn.disabled = !allFilled;
+    }
+
+    inputFields.forEach(input => input.addEventListener('input', validateCurrentTab));
+    achCheckbox.addEventListener('change', validateCurrentTab);
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tabButtons.forEach(btn => btn.classList.remove('is-active'));
+            formViews.forEach(view => view.classList.remove('is-visible'));
+            button.classList.add('is-active');
+            document.getElementById(button.getAttribute('data-target')).classList.add('is-visible');
+            validateCurrentTab();
+        });
+    });
+
+    // SEQUENCE ENGINE: Alternates between Variant A and B on successive clicks
+    function getNextVariant() {
+        let currentSequence = localStorage.getItem('retention_variant');
+        
+        if (!currentSequence || currentSequence === 'B') {
+            localStorage.setItem('retention_variant', 'A');
+            return 'A';
+        } else {
+            localStorage.setItem('retention_variant', 'B');
+            return 'B';
+        }
+    }
+
+    // Intercept payment workflow
+    submitPaymentBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (submitPaymentBtn.disabled) return;
+
+        currentShownVariant = getNextVariant();
+
+        if (currentShownVariant === 'A') {
+            // Variant A Injection Setup (Stretched Extension Plan)
+            experimentPill.innerText = "Flexible Payment Plan";
+            experimentPill.style.backgroundColor = "rgba(2, 132, 199, 0.1)";
+            experimentPill.style.color = "#0284c7";
+            
+            experimentTitle.innerText = "Special Offer";
+            experimentSubtitle.innerText = "Get a reduction on your monthly installments now.";
+            experimentSubtitle.style.color = "#0284c7";
+            experimentDesc.innerText = "We value your business! If you choose to stay with First Help Financial today, we will significantly lower your immediate monthly costs by stretching your payment plan over an additional six months.";
+            
+            btnAcceptOffer.style.backgroundColor = "#0284c7";
+        } else {
+            // Variant B Injection Setup (5% Percentage Discount)
+            experimentPill.innerText = "Exclusive 5% Discount";
+            experimentPill.style.backgroundColor = "rgba(34, 197, 94, 0.1)";
+            experimentPill.style.color = "#16a34a";
+            
+            experimentTitle.innerText = "5% Discount Now";
+            experimentSubtitle.innerText = "Save 5% on your monthly installments to stay with First Help Financial.";
+            experimentSubtitle.style.color = "#16a34a";
+            experimentDesc.innerText = "Don't miss out on an exclusive rate reduction. By choosing to keep your account open today, we will immediately slash 5% off your recurring monthly installments to reward your loyalty.";
+            
+            btnAcceptOffer.style.backgroundColor = "#22c55e";
+        }
+
+        retentionModal.classList.add('is-open');
+    });
+
+    // Accept Route Navigation Handler
+    btnAcceptOffer.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.href = `Calculator.html?offer=accepted&variant=${currentShownVariant}`;
+    });
+
+    // Decline / Proceed Workflow Loop
+    btnDeclineOffer.addEventListener('click', (e) => {
+        e.preventDefault(); 
+        
+        retentionModal.classList.remove('is-open');
+        
+        submitPaymentBtn.disabled = true;
+        submitPaymentBtn.innerText = "Processing Transaction...";
+        submitPaymentBtn.style.backgroundColor = "#64748b";
+
+        setTimeout(() => {
+            window.location.href = `Payment confirmation.html?offer=declined&variant=${currentShownVariant}`;
+        }, 1500); 
+    });
+</script>
+
+</body>
+</html>

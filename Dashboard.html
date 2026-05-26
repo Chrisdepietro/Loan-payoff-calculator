@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; gap: 20px; padding: 20px; background: #f4f7f6; }
+        .main-chart { flex: 1; background: white; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; }
+        .sidebar { width: 300px; display: flex; flex-direction: column; gap: 10px; }
+        .card { background: white; padding: 15px; border-radius: 12px; border: 1px solid #e0e0e0; }
+        .title { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; }
+        .value { font-size: 20px; font-weight: bold; margin: 5px 0; }
+        .sub { font-size: 12px; color: #888; }
+        .down { color: red; font-weight: bold; }
+        .up { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="main-chart">
+    <h3>Loan payoff calls & engagement overview</h3>
+    <canvas id="myChart"></canvas>
+</div>
+
+<div class="sidebar">
+    <div class="card">
+        <div class="title">Last quarters avg. calls</div>
+        <div class="value">4,571</div>
+    </div>
+    <div class="card">
+        <div class="title">Current calculator engagement</div>
+        <div class="value">3,566</div>
+    </div>
+    <div class="card">
+        <div class="title">Current calls related to loan payoffs</div>
+        <div class="value">503</div>
+        <div class="sub">Avg / Day <span class="down">↓ -20.7%</span></div>
+    </div>
+    <div class="card">
+        <div class="title">Retention (Variant A)</div>
+        <div class="value">73 (10.6%)</div>
+        <div class="sub">Avg / Day <span class="up">↑ 4.5%</span></div>
+    </div>
+    <div class="card">
+        <div class="title">Retention (Variant B)</div>
+        <div class="value">67 (9.8%)</div>
+        <div class="sub">Avg / Day <span class="up">↑ 3.8%</span></div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [
+                { label: 'Calculator Engagement', data: [3420, 3680, 3300, 3850, 3520, 3760, 3430], borderColor: 'purple', tension: 0.4 },
+                { label: 'Current Calls', data: [553, 600, 532, 629, 569, 605, 553], borderColor: 'blue', borderDash: [5, 5] }
+            ]
+        }
+    });
+</script>
+</body>
+</html>

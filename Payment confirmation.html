@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payoff Authorized - Confirmation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
+            margin: 0;
+            padding: 60px 20px;
+            display: flex;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .portal-wrapper {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .portal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: conic-gradient(#0284c7 0deg 180deg, #ef4444 180deg 360deg);
+            position: relative;
+        }
+
+        .logo-mark::after {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            background: #f1f5f9;
+            border-radius: 50%;
+        }
+
+        .logo-typography {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #0f172a;
+        }
+
+        .logo-typography span {
+            color: #ef4444;
+            font-weight: 800;
+        }
+
+        .badge-utility {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background-color: #1e293b;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        /* Back Navigation Container Link */
+        .back-nav-container {
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #0f172a;
+        }
+
+        .confirmation-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .success-circle {
+            width: 56px;
+            height: 56px;
+            background-color: #d1fae5;
+            color: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .sub-message {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #64748b;
+            max-width: 480px;
+            margin: 0 auto 35px auto;
+        }
+
+        .receipt-table {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 10px 24px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .receipt-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .receipt-lbl {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .receipt-val {
+            color: #0f172a;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="portal-wrapper">
+    <div class="portal-header">
+        <div class="logo-container">
+            <div class="logo-mark"></div>
+            <div class="logo-typography">First Help<span>Financial</span></div>
+        </div>
+        <div class="badge-utility">Receipt</div>
+    </div>
+
+    <div class="back-nav-container">
+        <a href="Calculator.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Calculator
+        </a>
+    </div>
+
+    <div class="confirmation-card">
+        <div class="success-circle">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+
+        <h1>Payoff Authorized</h1>
+        <p class="sub-message">Your transaction has been processed successfully. A confirmation email receipt has been sent to your registered address.</p>
+
+        <div class="receipt-table">
+            <div class="receipt-row">
+                <span class="receipt-lbl">Confirmation Code</span>
+                <span class="receipt-val" style="color: #0284c7;">FHF-83921-ACH</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-lbl">Authorization Date</span>
+                <span class="receipt-val">November 14, 2026</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-lbl">Payment Type</span>
+                <span class="receipt-val">Electronic Transfer</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

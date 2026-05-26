@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Liquidation Calculator</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc; --surface-card: #ffffff; --brand-primary: #0284c7; 
+            --brand-accent: #ef4444; --text-main: #334155; --text-dark: #0f172a;
+            --radius-lg: 16px; --radius-md: 12px; --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-main); color: var(--text-main); margin: 0; padding: 40px 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .portal-container { width: 100%; max-width: 1040px; }
+        .portal-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 24px; margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; }
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-mark { width: 32px; height: 32px; border-radius: 50%; background: conic-gradient(var(--brand-primary) 0deg 180deg, var(--brand-accent) 180deg 360deg); position: relative; }
+        .logo-mark::after { content: ''; position: absolute; inset: 6px; background: var(--bg-main); border-radius: 50%; }
+        .logo-typography { font-size: 22px; font-weight: 700; color: var(--text-dark); }
+        .logo-typography span { color: var(--brand-accent); font-weight: 800; }
+        .calculator-workspace { display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; align-items: start; }
+        .panel-form { background-color: var(--surface-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); padding: 35px; border: 1px solid #e2e8f0; }
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .fixed-data-display { font-size: 16px; font-weight: 600; color: var(--text-dark); padding: 8px 0; border-bottom: 1px dashed #e2e8f0; margin-bottom: 4px; }
+        .input-field { width: 100%; box-sizing: border-box; padding: 14px 16px; font-size: 15px; border: 1px solid #cbd5e1; border-radius: var(--radius-md); background-color: #f8fafc; }
+        .btn-generate-quote { width: 100%; background-color: var(--brand-primary); border: 2px solid var(--brand-primary); color: #ffffff; padding: 14px; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; margin-top: 10px; }
+        .btn-generate-quote:disabled { background-color: #f1f5f9; border-color: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+        .panel-summary { background-color: #0f172a; color: #ffffff; border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); padding: 35px 30px; opacity: 0; transform: translateY(10px); visibility: hidden; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+        .panel-summary.is-visible { opacity: 1; transform: translateY(0); visibility: visible; }
+        .meta-timestamp { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #38bdf8; margin-bottom: 25px; display: inline-block; background: rgba(56, 189, 248, 0.1); padding: 4px 10px; border-radius: 6px; }
+        .bill-spec-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #1e293b; font-size: 14px; }
+        .spec-lbl { color: #94a3b8; }
+        .spec-val { font-weight: 600; }
+        .total-payoff-row { background-color: #1e293b; margin: 20px -30px 30px -30px; padding: 24px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .total-lbl { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #38bdf8; }
+        .total-val { font-size: 32px; font-weight: 800; color: #ffffff; }
+        .action-pay-btn { width: 100%; background-color: var(--brand-primary); color: #ffffff; border: none; padding: 16px; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; }
+        .modal-overlay { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.25s ease; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-card { background-color: #ffffff; border-radius: 20px; width: 100%; max-width: 520px; padding: 35px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .survey-options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .survey-option-label { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: var(--radius-md); cursor: pointer; }
+        .survey-text-area { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #cbd5e1; border-radius: var(--radius-md); resize: none; margin-bottom: 20px; }
+        .modal-btn-submit { width: 100%; background-color: var(--brand-primary); color: #ffffff; border: none; padding: 14px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="portal-container">
+    <header class="portal-header">
+        <div class="logo-container">
+            <div class="logo-mark"></div>
+            <div class="logo-typography">First Help<span>Financial</span></div>
+        </div>
+    </header>
+
+    <div class="calculator-workspace">
+        <form class="panel-form" onsubmit="event.preventDefault();">
+            <h2>Loan payoff calculator</h2>
+            <div class="form-group">
+                <label class="form-label">Loan ID</label>
+                <div class="fixed-data-display">LN-83921-FULL</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Target Payoff Date (MM/DD/YYYY)</label>
+                <input type="date" class="input-field" id="payoff-date-picker">
+            </div>
+            <button class="btn-generate-quote" id="generate-quote-btn" type="button" disabled>Generate Payoff Quote</button>
+        </form>
+
+        <div class="panel-summary" id="quote-summary-panel">
+            <div class="meta-timestamp">Quote</div>
+            <div class="bill-spec-row"><span class="spec-lbl">Total Scheduled Payments</span><span class="spec-val">$29,462.40</span></div>
+            <div class="bill-spec-row"><span class="spec-lbl">Total Amount Paid</span><span class="spec-val">$16,070.40</span></div>
+            <div class="bill-spec-row"><span class="spec-lbl">Remaining Scheduled Payments</span><span class="spec-val">$13,392.00</span></div>
+            <div class="total-payoff-row">
+                <span class="total-lbl">Total Payoff Amount</span>
+                <span class="total-val">$10,708.27</span>
+            </div>
+            <button class="action-pay-btn" id="open-survey-btn" type="button">Make online payment</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="survey-modal">
+    <div class="modal-card">
+        <h3>Please share feedback</h3>
+        <div class="survey-options-list">
+            <label class="survey-option-label"><input type="radio" name="reason" value="better_offer" checked> I have received a better offer elsewhere</label>
+            <label class="survey-option-label"><input type="radio" name="reason" value="selling"> Selling / Trading in the vehicle</label>
+            <label class="survey-option-label"><input type="radio" name="reason" value="savings"> Paying off using personal savings</label>
+            <label class="survey-option-label"><input type="radio" name="reason" value="totaled"> Vehicle was totaled / Insurance</label>
+        </div>
+        <textarea class="survey-text-area" rows="3" placeholder="Additional details..."></textarea>
+        <button class="modal-btn-submit" id="submit-survey-btn">Continue to Payment</button>
+    </div>
+</div>
+
+<script>
+    const datePicker = document.getElementById('payoff-date-picker');
+    const generateQuoteBtn = document.getElementById('generate-quote-btn');
+    const quoteSummaryPanel = document.getElementById('quote-summary-panel');
+    const payBtn = document.getElementById('open-survey-btn');
+    const modalOverlay = document.getElementById('survey-modal');
+    const submitSurveyBtn = document.getElementById('submit-survey-btn');
+
+    datePicker.addEventListener('input', () => {
+        generateQuoteBtn.disabled = !datePicker.value;
+    });
+
+    generateQuoteBtn.addEventListener('click', () => {
+        quoteSummaryPanel.classList.add('is-visible');
+    });
+
+    payBtn.addEventListener('click', () => {
+        modalOverlay.classList.add('active');
+    });
+
+    submitSurveyBtn.addEventListener('click', () => {
+        window.location.href = "Make payment.html";
+    });
+</script>
+</body>
+</html>
